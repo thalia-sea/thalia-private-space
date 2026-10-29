@@ -1,0 +1,540 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="data:,">
+  <title>私室 · Nocturne Red</title>
+  <style>
+    :root{
+      --paper:#f3efe5;
+      --paper-light:#fbf8ef;
+      --ink:#1d2a23;
+      --muted:#6e746b;
+      --olive:#4e604d;
+      --olive-soft:#dce3d4;
+      --rust:#b6512e;
+      --rust-soft:#eed9ce;
+      --gold:#c49c58;
+      --line:#cfc7b7;
+      --shadow:rgba(44,57,45,.14);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      overflow-x:hidden;
+      min-height:100vh;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at 8% 6%, rgba(196,156,88,.12), transparent 24rem),
+        radial-gradient(circle at 90% 15%, rgba(78,96,77,.08), transparent 30rem),
+        var(--paper);
+      font-family:"Avenir Next","PingFang SC","Microsoft YaHei",sans-serif;
+      -webkit-font-smoothing:antialiased;
+    }
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.22;
+      background-image:
+        repeating-linear-gradient(0deg, rgba(74,67,52,.035) 0 1px, transparent 1px 4px),
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,.8) 0 1px, transparent 1.5px);
+      background-size:auto, 7px 7px;
+      mix-blend-mode:multiply;
+      z-index:20;
+    }
+    button{font:inherit}
+    .shell{
+      width:min(1360px, calc(100% - 72px));
+      margin:0 auto;
+      padding:34px 0 30px;
+      position:relative;
+    }
+    .masthead{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:28px;
+      padding-bottom:22px;
+      border-bottom:1px solid var(--line);
+      position:relative;
+    }
+    .masthead::after{
+      content:"";
+      position:absolute;
+      left:0;
+      bottom:-4px;
+      width:72px;
+      height:1px;
+      background:var(--rust);
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:16px;
+    }
+    .seal{
+      width:48px;
+      height:48px;
+      border:1px solid var(--rust);
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      color:var(--rust);
+      font-family:Georgia,"Songti SC",serif;
+      font-size:22px;
+      font-style:italic;
+      background:rgba(255,255,255,.28);
+      box-shadow:inset 0 0 0 4px var(--paper), inset 0 0 0 5px rgba(182,81,46,.35);
+    }
+    .eyebrow{
+      margin:0 0 5px;
+      font-size:10px;
+      line-height:1;
+      letter-spacing:.19em;
+      text-transform:uppercase;
+      color:var(--muted);
+      font-weight:700;
+    }
+    h1,h2,h3,p{margin-top:0}
+    h1{
+      margin-bottom:0;
+      font-family:Georgia,"Songti SC","STSong",serif;
+      font-weight:500;
+      font-size:28px;
+      letter-spacing:.08em;
+    }
+    .top-meta{
+      display:flex;
+      align-items:center;
+      gap:26px;
+      padding-top:3px;
+      position:relative;
+    }
+    .date-line{
+      margin:0;
+      text-align:right;
+      font-family:Georgia,"Songti SC",serif;
+      color:var(--olive);
+      font-size:15px;
+      letter-spacing:.06em;
+    }
+    .date-line span{
+      display:block;
+      margin-top:5px;
+      color:var(--muted);
+      font-family:"Avenir Next","PingFang SC",sans-serif;
+      font-size:10px;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+    }
+    .add-btn{
+      border:1px solid var(--ink);
+      color:var(--paper-light);
+      background:var(--ink);
+      padding:11px 17px 10px;
+      cursor:pointer;
+      border-radius:2px;
+      font-size:12px;
+      letter-spacing:.08em;
+      transition:transform .2s ease, background .2s ease, color .2s ease;
+    }
+    .add-btn:hover{background:var(--rust); border-color:var(--rust)}
+    .add-btn:active{transform:translateY(1px) scale(.99)}
+    .add-btn:focus-visible{outline:2px solid var(--gold); outline-offset:3px}
+    .add-menu{
+      position:absolute;
+      right:0;
+      top:57px;
+      z-index:10;
+      width:255px;
+      padding:9px;
+      background:var(--paper-light);
+      border:1px solid var(--line);
+      box-shadow:0 18px 40px var(--shadow);
+      transform-origin:top right;
+      animation:menuIn .18s ease both;
+    }
+    .add-menu[hidden]{display:none}
+    @keyframes menuIn{from{opacity:0;transform:translateY(-6px) scale(.98)}to{opacity:1;transform:none}}
+    .add-menu button{
+      width:100%;
+      text-align:left;
+      border:0;
+      background:transparent;
+      padding:10px 11px;
+      color:var(--ink);
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      gap:14px;
+      border-bottom:1px solid rgba(207,199,183,.55);
+    }
+    .add-menu button:last-child{border-bottom:0}
+    .add-menu button:hover{background:var(--olive-soft)}
+    .add-menu b{font-weight:600}
+    .add-menu span{font-size:10px;color:var(--muted);align-self:center}
+    .layout{
+      display:grid;
+      grid-template-columns:minmax(0, 1.65fr) minmax(330px, .72fr);
+      gap:54px;
+      padding-top:34px;
+    }
+    .main-column{min-width:0}
+    .section{padding:0 0 30px}
+    .section + .section{border-top:1px solid var(--line); padding-top:27px}
+    .section-head{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:22px;
+      margin-bottom:19px;
+    }
+    .section-head h2{
+      margin:0;
+      font-family:Georgia,"Songti SC","STSong",serif;
+      font-size:26px;
+      font-weight:500;
+      letter-spacing:.02em;
+    }
+    .section-head .tiny-note{
+      color:var(--muted);
+      font-size:11px;
+      padding-bottom:3px;
+      text-align:right;
+      font-style:italic;
+    }
+    .week-row{
+      display:grid;
+      grid-template-columns:repeat(7, 1fr);
+      border-top:1px solid var(--line);
+      border-bottom:1px solid var(--line);
+    }
+    .day{
+      min-height:132px;
+      padding:13px 11px 14px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:space-between;
+      border-right:1px solid var(--line);
+      position:relative;
+      transition:background .2s ease;
+    }
+    .day:last-child{border-right:0}
+    .day:hover{background:rgba(255,255,255,.32)}
+    .day.today{background:rgba(220,227,212,.45)}
+    .day .weekday{font-size:10px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase}
+    .cat{font-size:32px;line-height:1;filter:saturate(.78); transform:translateY(1px)}
+    .mood-name{font-family:Georgia,"Songti SC",serif;font-size:12px;color:var(--olive)}
+    .day .date{font-size:10px;color:#999486}
+    .day.empty .cat{opacity:.22; filter:grayscale(1)}
+    .day.empty .mood-name{color:#aaa597}
+    .day::after{content:"";width:20px;height:1px;background:rgba(78,96,77,.28);position:absolute;bottom:8px}
+    .projects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+    .project{
+      padding:16px 0 0;
+      border-top:2px solid var(--ink);
+      min-width:0;
+    }
+    .project:nth-child(2){border-top-color:var(--rust)}
+    .project-top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}
+    .project h3{font-family:Georgia,"Songti SC",serif;font-size:18px;font-weight:500;margin:0 0 7px}
+    .status{font-size:9px;letter-spacing:.12em;color:var(--olive);border:1px solid rgba(78,96,77,.35);padding:4px 7px;white-space:nowrap}
+    .project p{font-size:12px;line-height:1.75;color:var(--muted);margin:0 0 13px}
+    .progress-line{height:3px;background:#ded7c9;position:relative;margin-bottom:9px}
+    .progress-line i{display:block;height:100%;background:var(--olive);width:68%}
+    .project:nth-child(2) .progress-line i{background:var(--rust);width:36%}
+    .project-meta{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:10px}
+    .thoughts{list-style:none;padding:0;margin:0}
+    .thoughts li{
+      display:grid;
+      grid-template-columns:72px 1fr 28px;
+      gap:18px;
+      align-items:baseline;
+      padding:14px 0;
+      border-bottom:1px solid rgba(207,199,183,.7);
+    }
+    .thoughts li:first-child{padding-top:2px}
+    .thoughts time{font-family:Georgia,serif;color:var(--muted);font-size:11px}
+    .thought-title{font-family:Georgia,"Songti SC",serif;font-size:17px;color:var(--ink);text-decoration:none}
+    .thought-title:hover{color:var(--rust)}
+    .thought-excerpt{margin:5px 0 0;color:var(--muted);font-size:11px;line-height:1.6}
+    .arrow{font-family:Georgia,serif;color:var(--rust);text-align:right}
+    .side-column{position:relative}
+    .sticky-board{
+      position:sticky;
+      top:22px;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.18), transparent 18%, rgba(255,255,255,.12) 80%, transparent),
+        #e8dfcb;
+      border:1px solid #cfc1a6;
+      box-shadow:8px 12px 0 rgba(78,96,77,.08), 0 20px 40px rgba(78,66,44,.13);
+      padding:25px 22px 23px;
+      transform:rotate(.55deg);
+    }
+    .sticky-board::before{
+      content:"";
+      position:absolute;
+      top:-8px;
+      left:50%;
+      width:64px;
+      height:16px;
+      background:rgba(238,222,184,.8);
+      transform:translateX(-50%) rotate(-2deg);
+      box-shadow:0 1px 3px rgba(86,72,44,.12);
+    }
+    .board-title{display:flex;justify-content:space-between;align-items:flex-end;gap:13px;margin-bottom:22px}
+    .board-title h2{font-family:Georgia,"Songti SC",serif;font-size:24px;font-weight:500;margin:0}
+    .board-title span{font-size:9px;letter-spacing:.13em;color:var(--muted);text-transform:uppercase}
+    .urgent-block{
+      background:var(--rust-soft);
+      border-left:3px solid var(--rust);
+      padding:15px 15px 13px;
+      margin-bottom:22px;
+      position:relative;
+    }
+    .urgent-block::after{content:"within 30 days"; position:absolute; right:11px; top:10px; color:rgba(182,81,46,.6); font-size:8px; letter-spacing:.13em; text-transform:uppercase}
+    .urgent-label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--rust);font-weight:700;margin-bottom:11px}
+    .urgent-note h3{margin:0 0 7px;font-family:Georgia,"Songti SC",serif;font-size:18px;font-weight:500}
+    .urgent-note p{margin:0;color:#765348;font-size:12px;line-height:1.7}
+    .urgent-note time{display:block;margin-top:10px;color:var(--rust);font-size:10px;letter-spacing:.06em}
+    .long-label{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--olive);font-weight:700;margin:0 0 11px}
+    .long-list{display:grid;gap:16px}
+    .long-note{padding-bottom:15px;border-bottom:1px dashed rgba(78,96,77,.28)}
+    .long-note:last-child{border-bottom:0;padding-bottom:0}
+    .long-note h3{margin:0 0 5px;font-family:Georgia,"Songti SC",serif;font-size:16px;font-weight:500}
+    .long-note p{margin:0;color:#746f61;font-size:11px;line-height:1.65}
+    .long-note time{color:var(--olive);font-size:10px}
+    .marginalia{
+      margin:34px 15px 0;
+      padding-left:18px;
+      border-left:1px solid var(--gold);
+      color:var(--muted);
+      font-family:Georgia,"Songti SC",serif;
+      font-size:12px;
+      line-height:1.8;
+      transform:rotate(-1deg);
+    }
+    .marginalia strong{display:block;color:var(--rust);font-weight:500;margin-bottom:4px}
+    footer{
+      display:flex;
+      justify-content:space-between;
+      gap:30px;
+      margin-top:28px;
+      padding-top:15px;
+      border-top:1px solid var(--line);
+      color:#9a9487;
+      font-size:9px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+    }
+    @media (max-width: 1050px){
+      .shell{width:min(100% - 40px, 900px)}
+      .layout{grid-template-columns:1fr; gap:35px}
+      .sticky-board{position:relative; top:auto; max-width:600px; margin:0 auto}
+      .side-column{padding-top:8px}
+    }
+    @media (max-width: 680px){
+      .shell{width:calc(100% - 28px); padding-top:22px}
+      .masthead{flex-direction:column;align-items:stretch;gap:18px}
+      .brand{gap:10px}
+      .seal{width:40px;height:40px;font-size:18px}
+      h1{font-size:23px}
+      .top-meta{width:100%;justify-content:space-between;gap:12px}
+      .date-line{font-size:12px;text-align:left}
+      .date-line span{font-size:8px}
+      .add-btn{padding:10px 12px;font-size:11px}
+      .add-menu{right:0;left:auto;width:230px}
+      .section-head{align-items:flex-start;flex-direction:column;gap:7px}
+      .section-head .tiny-note{text-align:left}
+      .week-row{grid-template-columns:repeat(4,1fr)}
+      .day:nth-child(4){border-right:0}
+      .day:nth-child(n+5){border-top:1px solid var(--line)}
+      .day{min-height:105px;min-width:0;padding-left:6px;padding-right:6px}
+      .cat{font-size:26px}
+      .mood-name{font-size:10px}
+      .projects{min-width:0}
+      .project p{overflow-wrap:anywhere}
+      .projects{grid-template-columns:1fr; gap:23px}
+      .thoughts li{grid-template-columns:58px 1fr 20px; gap:10px}
+      .thought-title{font-size:15px}
+      .sticky-board{transform:none; padding:23px 18px}
+      footer{display:block; line-height:1.8}
+    }
+  </style>
+<style>
+:root{--black:#0b0809;--wine:#4c1118;--red:#d33a2f;--cream:#f2e4d2;--gold:#c59b5c}
+html{background:#0b0809}body{background:radial-gradient(circle at 78% 28%,rgba(211,58,47,.24),transparent 24%),radial-gradient(circle at 14% 80%,rgba(76,17,24,.48),transparent 38%),linear-gradient(135deg,#070708,#16090c 60%,#1e0b0f);color:var(--cream)}body::before{opacity:.15;background-image:repeating-linear-gradient(0deg,rgba(242,228,210,.08) 0 1px,transparent 1px 5px);mix-blend-mode:screen}body::after{content:"";position:fixed;inset:0;pointer-events:none;box-shadow:inset 0 0 230px #000;z-index:19}.shell{width:min(1380px,calc(100% - 54px));position:relative;z-index:1}.shell::before{content:"";position:absolute;right:-40px;top:94px;width:470px;height:470px;border:1px solid rgba(197,155,92,.15);border-radius:50%;box-shadow:0 0 0 32px rgba(211,58,47,.025),0 0 0 70px rgba(197,155,92,.025);pointer-events:none}.shell::after{content:"NOCTURNE / 29";position:absolute;right:20px;top:22px;color:rgba(197,155,92,.42);font-size:8px;letter-spacing:.35em;pointer-events:none}.masthead{border-color:rgba(197,155,92,.25);padding-bottom:21px}.masthead::after{background:var(--red);width:170px}.seal{border-color:var(--red);color:var(--cream);background:#1a090d;box-shadow:inset 0 0 0 4px #0b0809,inset 0 0 0 5px rgba(211,58,47,.6),0 0 28px rgba(211,58,47,.15)}.eyebrow{color:var(--gold)}h1{font:400 45px Georgia,"Songti SC",serif;color:var(--cream);letter-spacing:.15em}.date-line{color:var(--red);font-weight:700}.date-line span{color:var(--gold)}.add-btn{background:var(--red);border-color:var(--red);color:#fff7ee;font-weight:700;box-shadow:0 0 25px rgba(211,58,47,.2)}.add-btn:hover{background:var(--cream);border-color:var(--cream);color:var(--wine)}.add-menu{background:#17090d;border-color:rgba(197,155,92,.28);box-shadow:0 20px 50px #000}.add-menu button{color:var(--cream);border-color:rgba(197,155,92,.15)}.add-menu button:hover{background:#2c1117}.add-menu span{color:var(--gold)}
+.layout{gap:58px;padding-top:44px}.section{border-color:rgba(197,155,92,.18)}.section+.section{border-color:rgba(197,155,92,.18)}.section-head h2{font:400 39px Georgia,"Songti SC",serif;color:var(--cream);letter-spacing:.01em;text-shadow:0 0 25px rgba(211,58,47,.13)}.section-head h2::after{content:"";display:block;width:66px;height:2px;background:var(--red);margin-top:10px}.section-head .tiny-note{color:var(--gold);font-family:Georgia,serif;font-style:italic}.week-row{display:grid;grid-template-columns:repeat(7,1fr);gap:13px;border:0}.day{min-height:170px;padding:18px 8px 14px;background:linear-gradient(180deg,rgba(76,17,24,.55),rgba(11,8,9,.88));border:1px solid rgba(197,155,92,.24);border-radius:50% 50% 0 0;position:relative;box-shadow:inset 0 0 30px rgba(211,58,47,.04)}.day::after{content:"";position:absolute;left:50%;bottom:0;width:1px;height:16px;background:var(--gold);opacity:.55}.day:hover{background:linear-gradient(180deg,rgba(120,30,37,.7),rgba(11,8,9,.9));border-color:var(--red)}.day.today{background:linear-gradient(180deg,rgba(211,58,47,.75),rgba(27,8,12,.92));border-color:var(--cream);box-shadow:0 0 36px rgba(211,58,47,.2)}.day .weekday{color:var(--gold);font-size:9px;letter-spacing:.18em}.mood-name{color:var(--cream);font-family:Georgia,"Songti SC",serif;font-size:13px}.day .date{color:#b99a76;font-size:9px}.cat{font-size:35px;filter:drop-shadow(0 0 8px rgba(211,58,47,.3))}
+.projects .project{border:1px solid rgba(197,155,92,.24);border-left:4px solid var(--red);background:linear-gradient(135deg,rgba(69,15,21,.5),rgba(10,8,9,.8));padding:18px}.project:nth-child(2){border-left-color:var(--gold);background:linear-gradient(135deg,rgba(23,22,24,.8),rgba(10,8,9,.8))}.project h3{color:var(--cream);font:400 24px Georgia,"Songti SC",serif}.project p,.project-meta{color:#b9ada4}.status{color:var(--gold);border-color:rgba(197,155,92,.36)}.progress-line{background:rgba(197,155,92,.14)}.progress-line i{background:var(--red)}.project:nth-child(2) .progress-line i{background:var(--gold)}.thoughts{border-left:1px solid rgba(197,155,92,.3);padding-left:23px}.thoughts li{border-color:rgba(197,155,92,.16);position:relative}.thoughts li::before{content:"";position:absolute;left:-28px;top:20px;width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 12px rgba(211,58,47,.55)}.thoughts time{color:var(--red);font-weight:700}.thought-title{color:var(--cream)}.thought-title:hover{color:var(--red)}.thought-excerpt{color:#b9ada4}
+.side-column::before{content:"";position:absolute;right:8px;top:-10px;width:310px;height:590px;border:1px solid rgba(197,155,92,.28);border-radius:155px 155px 10px 10px;box-shadow:0 0 90px rgba(211,58,47,.1);pointer-events:none}.sticky-board{position:sticky;top:26px;background:linear-gradient(145deg,#fbf0d7,#e7d3ae);border:1px solid #d9bb84;box-shadow:0 0 0 7px rgba(197,155,92,.05),0 24px 60px rgba(0,0,0,.4),12px 14px 0 rgba(76,17,24,.2);transform:rotate(.6deg);z-index:1}.board-title h2{color:#39232a;font:400 32px Georgia,"Songti SC",serif}.board-title span{color:#8e5e55}.urgent-block{background:linear-gradient(135deg,#f1c8b1,#e8ac91);border-left-color:#ad3d35}.urgent-label,.urgent-note time{color:#973d34}.urgent-note h3,.long-note h3{color:#3b242b}.urgent-note p,.long-note p{color:#73595a}.long-label{color:#7a4a68}.long-note time{color:#9b3e51}.long-note{border-color:rgba(119,77,74,.24)}.marginalia{border-color:var(--gold);color:#b9ada4}.marginalia strong{color:var(--red)}footer{border-color:rgba(197,155,92,.2);color:#8a7e78}
+</style>
+
+<link rel="stylesheet" href="app.css"></head>
+<body>
+  <div class="shell">
+    <header class="masthead">
+      <div class="brand">
+        <div class="seal">T</div>
+        <div>
+          <p class="eyebrow">A private room · est. 2026</p>
+          <h1 class="salon-title">恭迎老大！<span>老大辛苦了！</span></h1>
+          <button class="inline-add" id="addBtn" aria-expanded="false">＋ 记录</button>
+        </div>
+      </div>
+      <div class="top-meta">
+        <p class="date-line">2026 / 10 / 29<span>星期四 · 北京</span></p>
+      </div>
+    </header>
+
+    <main class="layout">
+      <div class="main-column">
+        <section class="section">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Mood, this week</p>
+              <h2>这一周，心情是...</h2>
+            </div>
+            <span class="tiny-note">选一只猫，留下今天</span>
+          </div>
+          <div class="week-row">
+            <div class="day"><span class="weekday">Fri</span><span class="cat">😺</span><span class="mood-name">小开心</span><span class="date">10.23</span></div>
+            <div class="day"><span class="weekday">Sat</span><span class="cat">😽</span><span class="mood-name">满足</span><span class="date">10.24</span></div>
+            <div class="day"><span class="weekday">Sun</span><span class="cat">🐱</span><span class="mood-name">平静</span><span class="date">10.25</span></div>
+            <div class="day"><span class="weekday">Mon</span><span class="cat">🙀</span><span class="mood-name">崩溃</span><span class="date">10.26</span></div>
+            <div class="day"><span class="weekday">Tue</span><span class="cat">😾</span><span class="mood-name">生气</span><span class="date">10.27</span></div>
+            <div class="day"><span class="weekday">Wed</span><span class="cat">😸</span><span class="mood-name">开心</span><span class="date">10.28</span></div>
+            <div class="day today"><span class="weekday">Thu</span><span class="cat">😻</span><span class="mood-name">超开心</span><span class="date">10.29</span></div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">In motion</p>
+              <h2>正在发生</h2>
+            </div>
+            <span class="tiny-note">没有进展也可以，日子不是任务清单</span>
+          </div>
+          <div class="projects">
+            <article class="project">
+              <div class="project-top">
+                <h3>智能车视觉</h3>
+                <span class="status">进行中</span>
+              </div>
+              <p>完成反光保护回归测试。明天把近处 error 和 valid 再对齐一次。</p>
+              <div class="progress-line"><i></i></div>
+              <div class="project-meta"><span>最近更新 · 今天</span><span>截止 11.25</span></div>
+            </article>
+            <article class="project">
+              <div class="project-top">
+                <h3>大创立项</h3>
+                <span class="status">进行中</span>
+              </div>
+              <p>整理立项书框架，把“低温等离子体表面改性”拆成三个可验证的问题。</p>
+              <div class="progress-line"><i></i></div>
+              <div class="project-meta"><span>最近更新 · 昨天</span><span>截止 12.18</span></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">Words kept</p>
+              <h2>手记</h2>
+            </div>
+            <a class="tiny-note view-all" href="notes.html">查看全部 ↗</a>
+          </div>
+          <ul class="thoughts">
+            <li>
+              <time>10.29</time>
+              <div><a class="thought-title" href="#">关于“把生活整理成自己的房间”</a><p class="thought-excerpt">也许我想要的不是一个更漂亮的日记本，而是一个能回头看的地方。</p></div>
+              <span class="arrow">↗</span>
+            </li>
+            <li>
+              <time>10.27</time>
+              <div><a class="thought-title" href="#">今天不想做正确的人</a><p class="thought-excerpt">只想先把那口气留在纸上，不急着变成一个情绪稳定的大人。</p></div>
+              <span class="arrow">↗</span>
+            </li>
+            <li>
+              <time>10.24</time>
+              <div><a class="thought-title" href="#">给未来的自己</a><p class="thought-excerpt">如果有一天你忘了现在的自己有多用力，就回来看看这一页。</p></div>
+              <span class="arrow">↗</span>
+            </li>
+          </ul>
+        </section>
+      </div>
+
+      <aside class="side-column">
+        <section class="sticky-board" aria-label="便签总览">
+          <div class="board-title"><h2>便签</h2><span>One board · all notes</span></div>
+          <div class="urgent-block">
+            <div class="urgent-label">近期重要 · 一个月内</div>
+            <div class="urgent-note">
+              <h3>大物期中考试</h3>
+              <p>把错题和公式再过一遍。焦虑没有用，先做一页算一页。</p>
+              <time>11.12 · 还有 14 天</time>
+            </div>
+          </div>
+          <p class="long-label">长期与未定日期</p>
+          <div class="long-list">
+            <div class="long-note"><h3>等离子体大赛</h3><p>明年 3 月 · 官方通知未定</p><time>置顶观察</time></div>
+            <div class="long-note"><h3>给房间换一盏灯</h3><p>想要一盏不刺眼的黄光台灯。</p><time>日期未定</time></div>
+            <div class="long-note"><h3>读完《一间自己的房间》</h3><p>慢慢读，不写读书报告。</p><time>今年内</time></div>
+          </div>
+        </section>
+        <div class="marginalia"><strong>“A room of one's own.”</strong>不是逃开世界，是给自己留一处不必解释的桌面。</div>
+      </aside>
+    </main>
+
+    <footer><span>Private by design · only Thalia</span><button class="footer-export" type="button" data-export-data>下载全部数据</button><span>Last tended · 2026.10.29</span></footer>
+  </div>
+
+<style>
+<style>
+body{background:radial-gradient(circle at 73% 19%,rgba(143,45,59,.32),transparent 22%),radial-gradient(circle at 12% 72%,rgba(88,32,42,.28),transparent 30%),linear-gradient(145deg,#0c0b0d,#171013 58%,#0e0c0d);color:#efe2d2}.shell::before{content:"29";position:absolute;right:-26px;top:96px;width:auto;height:auto;border:0;box-shadow:none;font:400 260px/.75 Georgia,serif;letter-spacing:-.10em;color:rgba(143,45,59,.15);filter:none}.shell::after{content:"A PRIVATE STUDY / VOL. 29";left:42%;top:20px;color:rgba(213,178,104,.52);font-size:8px;letter-spacing:.32em}.masthead{padding-bottom:18px;border-color:rgba(239,226,210,.22)}.masthead::after{background:#a8323d;width:130px}.seal{border-color:#c69b5b;color:#c69b5b;box-shadow:inset 0 0 0 4px #0c0b0d,inset 0 0 0 5px rgba(198,155,91,.35),0 0 28px rgba(168,50,61,.16)}h1{font-size:54px;letter-spacing:.1em;text-shadow:0 0 28px rgba(239,226,210,.08)}.date-line{color:#c69b5b}.date-line span{color:#9a8983}.add-btn{background:#a8323d;border-color:#a8323d;color:#f7eee2;box-shadow:0 0 25px rgba(168,50,61,.25)}.add-btn:hover{background:#c69b5b;border-color:#c69b5b;color:#171013}
+.layout{padding-top:28px;gap:44px}.section-head h2{font-size:44px;letter-spacing:-.035em;text-shadow:none}.section-head h2::after{width:86px;height:2px;background:#a8323d}.section-head .tiny-note{color:#a99a94;font-size:12px}.week-row{gap:18px;align-items:end;border:0}.day{aspect-ratio:1;min-height:0;border-radius:50%;border:1px solid rgba(239,226,210,.22);background:radial-gradient(circle at 45% 24%,rgba(198,155,91,.12),rgba(22,16,19,.9) 72%);padding:13px 6px;box-shadow:0 0 28px rgba(0,0,0,.16)}.day:nth-child(1),.day:nth-child(2){background:radial-gradient(circle at 45% 24%,rgba(168,50,61,.25),rgba(22,16,19,.9) 72%)}.day:nth-child(3){background:radial-gradient(circle at 45% 24%,rgba(77,106,85,.26),rgba(22,16,19,.9) 72%)}.day:nth-child(4){background:radial-gradient(circle at 45% 24%,rgba(168,50,61,.45),rgba(22,16,19,.9) 72%)}.day:nth-child(5){background:radial-gradient(circle at 45% 24%,rgba(138,90,68,.4),rgba(22,16,19,.9) 72%)}.day:nth-child(6){background:radial-gradient(circle at 45% 24%,rgba(77,106,85,.26),rgba(22,16,19,.9) 72%)}.day:nth-child(7){background:radial-gradient(circle at 45% 24%,rgba(168,50,61,.6),rgba(22,16,19,.9) 72%);transform:translateY(-10px);border-color:#c69b5b;box-shadow:0 0 34px rgba(168,50,61,.22)}.day::after{display:none}.day.today .mood-name,.day.today .date{color:#f7eee2}.cat{font-size:38px}.day .weekday{font-size:9px;color:#c69b5b}.mood-name{font-size:14px}.day .date{color:#9a8983}.day:hover{background:radial-gradient(circle at 45% 24%,rgba(198,155,91,.26),rgba(35,23,27,.95) 72%);border-color:#c69b5b}
+.projects .project{border:0;border-left:0;padding:23px 21px;background:linear-gradient(135deg,rgba(95,28,42,.62),rgba(18,13,16,.94));box-shadow:10px 12px 0 rgba(0,0,0,.12)}.projects .project:nth-child(2){background:linear-gradient(135deg,rgba(67,53,44,.72),rgba(18,13,16,.94));border-left:0}.project h3{font-size:26px}.project p{color:#b5a49c}.project-meta{color:#b5a49c}.status{color:#c69b5b;border-color:rgba(198,155,91,.4)}.progress-line{background:rgba(239,226,210,.13)}.progress-line i{background:#a8323d}.project:nth-child(2) .progress-line i{background:#c69b5b}.thoughts{border-left:1px solid rgba(198,155,91,.36)}.thoughts time{color:#c69b5b}.thoughts li::before{background:#a8323d;box-shadow:0 0 12px rgba(168,50,61,.55)}.thought-title{font-size:19px}.section+.section{padding-top:34px}.sticky-board{transform:none;background:linear-gradient(145deg,#f5e8d1,#e7d2af);border:0;border-top:4px solid #a8323d;box-shadow:0 22px 50px rgba(0,0,0,.35),10px 12px 0 rgba(168,50,61,.14)}.board-title h2{font-size:35px}.urgent-block{background:#e6b7aa;border-left-color:#a8323d}.urgent-label,.urgent-note time{color:#933c3f}.long-label{color:#7f5a4b}.long-note time{color:#933c3f}.side-column::before{display:none}.marginalia{margin-top:26px}.footer{color:#8f817c}.layout .main-column{min-width:0}.sections{padding-top:0}
+@media(max-width:1100px){h1{font-size:46px}.section-head h2{font-size:36px}.week-row{gap:10px}}
+</style>
+</style><style>
+<style>
+body{background:radial-gradient(circle at 77% 18%,rgba(176,90,104,.18),transparent 23%),radial-gradient(circle at 13% 78%,rgba(78,29,42,.24),transparent 34%),linear-gradient(145deg,#09090c,#121217 58%,#0e0b0f);color:#eee3d5}body::before{opacity:.08;background-image:repeating-linear-gradient(0deg,rgba(238,227,213,.06) 0 1px,transparent 1px 5px);mix-blend-mode:screen}body::after{box-shadow:inset 0 0 250px rgba(0,0,0,.82)}.shell::before{color:rgba(176,90,104,.12)}.shell::after{color:rgba(201,163,108,.4)}.masthead{border-color:rgba(238,227,213,.2)}.masthead::after{background:#b05a68;width:120px}.seal{border-color:#c9a36c;color:#c9a36c;box-shadow:inset 0 0 0 4px #09090c,inset 0 0 0 5px rgba(201,163,108,.3),0 0 32px rgba(176,90,104,.12)}h1{color:#f0e5d8}.date-line{color:#c9a36c}.date-line span{color:#8e969c}.add-btn{background:linear-gradient(135deg,#71303d,#3b1a24);border-color:rgba(201,163,108,.5);color:#f0e5d8;box-shadow:0 0 28px rgba(176,90,104,.15)}.add-btn:hover{background:#c9a36c;border-color:#c9a36c;color:#09090c}.add-menu{background:#141419;border-color:rgba(201,163,108,.28);box-shadow:0 20px 50px rgba(0,0,0,.55)}.add-menu button{color:#eee3d5;border-color:rgba(201,163,108,.13)}.add-menu button:hover{background:#24131d}.add-menu span{color:#8e969c}
+.section-head h2{color:#f0e5d8;text-shadow:0 0 24px rgba(176,90,104,.08)}.section-head h2::after{background:#b05a68;width:72px}.section-head .tiny-note{color:#9c9a9e;font-style:italic}.day{background:linear-gradient(160deg,rgba(69,27,39,.56),rgba(14,13,17,.9));border-color:rgba(201,163,108,.22);box-shadow:inset 0 0 28px rgba(176,90,104,.03),0 12px 24px rgba(0,0,0,.2)}.day:nth-child(4){background:linear-gradient(160deg,rgba(111,39,54,.7),rgba(14,13,17,.92))}.day:nth-child(7){background:linear-gradient(160deg,rgba(91,30,45,.78),rgba(14,13,17,.94))}.day:hover{background:linear-gradient(160deg,rgba(103,40,55,.68),rgba(14,13,17,.94));border-color:#c9a36c}.day.today{border-color:#c9a36c;box-shadow:0 0 35px rgba(176,90,104,.2)}.day .weekday{color:#c9a36c}.mood-name{color:#f0e5d8}.day .date{color:#8e969c}.cat{filter:drop-shadow(0 0 9px rgba(201,163,108,.16))}
+.projects .project{border:1px solid rgba(201,163,108,.2);background:linear-gradient(145deg,rgba(58,22,33,.65),rgba(15,14,18,.9));box-shadow:inset 0 0 35px rgba(176,90,104,.03)}.projects .project:nth-child(2){background:linear-gradient(145deg,rgba(33,34,39,.78),rgba(15,14,18,.92));border-color:rgba(142,150,156,.25)}.project h3{color:#f0e5d8}.project p,.project-meta{color:#a7a0a0}.status{color:#c9a36c;border-color:rgba(201,163,108,.33);background:rgba(0,0,0,.1)}.progress-line{background:rgba(238,227,213,.12)}.progress-line i{background:linear-gradient(90deg,#7d3547,#b05a68)}.project:nth-child(2) .progress-line i{background:linear-gradient(90deg,#5c6670,#9ba1a3)}
+.thoughts{border-left-color:rgba(201,163,108,.3)}.thoughts li{border-color:rgba(201,163,108,.13)}.thoughts time{color:#b05a68}.thought-title{color:#f0e5d8}.thought-title:hover{color:#c9a36c}.thought-excerpt{color:#a7a0a0}.thoughts li::before{background:#b05a68;box-shadow:0 0 12px rgba(176,90,104,.45)}
+.sticky-board{background:linear-gradient(145deg,rgba(35,24,31,.88),rgba(12,12,15,.96));border:1px solid rgba(201,163,108,.3);box-shadow:0 24px 60px rgba(0,0,0,.48),0 0 0 1px rgba(176,90,104,.08),0 0 70px rgba(176,90,104,.06);transform:none;backdrop-filter:blur(16px);color:#eee3d5}.sticky-board::before{display:none}.board-title h2{color:#f0e5d8;font-size:34px}.board-title span{color:#9c9a9e}.urgent-block{background:linear-gradient(135deg,rgba(111,39,54,.7),rgba(53,22,32,.7));border-left-color:#b05a68}.urgent-label,.urgent-note time{color:#d18a96}.urgent-note h3,.long-note h3{color:#f0e5d8}.urgent-note p,.long-note p{color:#aaa0a0}.long-label{color:#c9a36c}.long-note{border-color:rgba(201,163,108,.16)}.long-note time{color:#b05a68}.marginalia{border-color:#c9a36c;color:#aaa0a0}.marginalia strong{color:#b05a68}footer{border-color:rgba(201,163,108,.2);color:#7f7a7e}
+</style>
+</style><style>
+.masthead h1{font-size:38px;line-height:1.1;letter-spacing:.025em;color:#f0e5d8;white-space:nowrap}
+.masthead h1 span{display:inline;color:#c9a36c;font-size:.86em;letter-spacing:.06em;margin-left:8px}
+</style>
+<style>
+body{background:radial-gradient(ellipse at 58% 0%,rgba(158,26,48,.36),transparent 32%),radial-gradient(circle at 8% 85%,rgba(117,20,39,.22),transparent 34%),linear-gradient(155deg,#090205,#19060b 56%,#0d0306);color:#f4e7d5}body::before{opacity:.2;background-image:repeating-linear-gradient(0deg,rgba(244,231,213,.06) 0 1px,transparent 1px 4px),repeating-linear-gradient(90deg,rgba(201,163,108,.05) 0 1px,transparent 1px 28px);mix-blend-mode:screen}body::after{box-shadow:inset 0 0 260px rgba(0,0,0,.82),inset 0 0 90px rgba(103,13,31,.24)}.shell::before{content:"RED SALON";position:absolute;left:34%;top:20px;font:10px "Avenir Next",sans-serif;letter-spacing:.36em;color:rgba(220,176,126,.42);pointer-events:none}.shell::after{display:none}.masthead{border-color:rgba(220,176,126,.25);padding-bottom:20px}.masthead::after{background:#b52d4c;width:180px;height:2px;box-shadow:0 0 16px #b52d4c}.seal{border-color:#d3a66b;color:#f4e7d5;box-shadow:inset 0 0 0 4px #090205,inset 0 0 0 5px rgba(211,166,107,.45),0 0 34px rgba(181,45,76,.2)}.salon-title{font-size:38px!important;color:#f4e7d5!important;text-shadow:0 0 24px rgba(181,45,76,.18)}.salon-title span{color:#f4e7d5!important;font-size:1em!important;margin-left:10px!important}.date-line{color:#d3a66b}.date-line span{color:#a88d90}.add-btn{background:linear-gradient(135deg,#8e2640,#4d1121);border-color:rgba(211,166,107,.56);box-shadow:0 0 32px rgba(181,45,76,.3)}.add-btn:hover{background:#d3a66b;border-color:#d3a66b;color:#120308}
+.layout{position:relative;padding-top:30px}.layout::before{content:"";position:absolute;left:0;right:0;top:0;height:300px;background:radial-gradient(ellipse at center,rgba(181,45,76,.18),transparent 67%);pointer-events:none;z-index:-1}.section-head h2::after{background:#b52d4c;width:90px}.section-head .tiny-note{color:#b69b99}.day{background:linear-gradient(160deg,rgba(95,18,39,.68),rgba(15,5,9,.94));border-color:rgba(211,166,107,.3);box-shadow:inset 0 0 30px rgba(181,45,76,.06),0 12px 25px rgba(0,0,0,.28)}.day:nth-child(4){background:linear-gradient(160deg,rgba(153,33,58,.78),rgba(18,5,9,.95))}.day:nth-child(7){background:linear-gradient(160deg,rgba(181,45,76,.88),rgba(18,5,9,.96));border-color:#d3a66b;box-shadow:0 0 38px rgba(181,45,76,.3)}.day:hover{border-color:#f4e7d5}.day .weekday{color:#d3a66b}.mood-name{color:#f4e7d5}.day .date{color:#bba1a2}.cat{filter:drop-shadow(0 0 10px rgba(211,166,107,.25))}
+.projects .project{background:linear-gradient(145deg,rgba(87,16,37,.78),rgba(16,6,10,.94));border-color:rgba(211,166,107,.25);box-shadow:inset 0 0 36px rgba(181,45,76,.05)}.projects .project:nth-child(2){background:linear-gradient(145deg,rgba(51,12,24,.86),rgba(16,6,10,.95))}.project h3{color:#f4e7d5}.project p,.project-meta{color:#bfa9a6}.status{color:#d3a66b;border-color:rgba(211,166,107,.4)}.progress-line{background:rgba(244,231,213,.12)}.progress-line i{background:linear-gradient(90deg,#8e2640,#c24a66)}.project:nth-child(2) .progress-line i{background:linear-gradient(90deg,#6f4b57,#d3a66b)}
+.thoughts{border-left-color:rgba(211,166,107,.38)}.thoughts time{color:#c24a66}.thoughts li::before{background:#b52d4c;box-shadow:0 0 14px rgba(181,45,76,.65)}.thought-title{color:#f4e7d5}.thought-title:hover{color:#d3a66b}.thought-excerpt{color:#bfa9a6}
+.sticky-board{background:linear-gradient(145deg,rgba(48,10,23,.92),rgba(12,4,8,.98));border-color:rgba(211,166,107,.4);box-shadow:0 24px 65px rgba(0,0,0,.58),0 0 0 1px rgba(181,45,76,.15),0 0 80px rgba(181,45,76,.1)}.board-title h2{color:#f4e7d5}.board-title span{color:#b69b99}.urgent-block{background:linear-gradient(135deg,rgba(133,22,47,.82),rgba(66,10,25,.86));border-left-color:#c24a66}.urgent-label,.urgent-note time{color:#e0a3ae}.urgent-note h3,.long-note h3{color:#f4e7d5}.urgent-note p,.long-note p{color:#bfa9a6}.long-label{color:#d3a66b}.long-note{border-color:rgba(211,166,107,.2)}.long-note time{color:#c24a66}.marginalia{border-color:#d3a66b;color:#bfa9a6}.marginalia strong{color:#c24a66}footer{border-color:rgba(211,166,107,.25);color:#8f777d}
+</style>
+
+<style>
+.projects{gap:20px}.projects .project{background:linear-gradient(145deg,#cbb38e 0%,#b99a73 100%);border:1px solid #dfcdb0;box-shadow:0 12px 28px rgba(0,0,0,.2);position:relative;overflow:hidden;color:#302326;opacity:1}.projects .project:nth-child(2){background:linear-gradient(145deg,#c0adb2 0%,#a9969d 100%);border-color:#d5c3c8;box-shadow:0 12px 28px rgba(0,0,0,.2)}.projects .project::after{display:none}.project h3{color:#2d2024}.project p{color:#5d4d4c}.project-meta{color:#6b5856}.project .status{color:#6b2834;border-color:#9e6b73;background:rgba(255,247,237,.26)}.project:nth-child(2) .status{color:#66313b;border-color:#9c7078;background:rgba(255,247,237,.22)}.project .progress-line{background:rgba(55,31,31,.22)}.project .progress-line i{background:#7b2c3b}.project:nth-child(2) .progress-line i{background:#7b3f4a}.project .bar i{background:#7b2c3b}.project:nth-child(2) .bar i{background:#7b3f4a)}
+</style>
+
+<style>
+.projects{gap:18px}.projects .project{padding:15px 18px 14px;min-height:0;background:linear-gradient(135deg,#c8b08b 0%,#b89a75 48%,#c6ac88 100%);border:1px solid #d8c1a0;box-shadow:0 8px 18px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,248,235,.36);position:relative;overflow:hidden;color:#302326}.projects .project:nth-child(2){background:linear-gradient(135deg,#bda7a9 0%,#a88f95 50%,#b9a1a4 100%);border-color:#d0b9be;box-shadow:0 8px 18px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,244,244,.28)}.projects .project::before{content:"";position:absolute;inset:7px;border:1px solid rgba(70,45,38,.22);pointer-events:none;z-index:0}.projects .project:nth-child(2)::before{border-color:rgba(70,45,55,.18)}.projects .project::after{display:block;content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.045) 0 1px,transparent 1px 4px);opacity:.55;mix-blend-mode:soft-light}.projects .project>*{position:relative;z-index:1}.projecttop{margin-bottom:7px}.project h3{font-size:22px;color:#302126;margin-bottom:6px}.project p{font-size:11px;line-height:1.55;margin-bottom:9px;color:#5e4a44}.project:nth-child(2) p{color:#635156}.project-meta{font-size:9px;color:#6c554b}.project:nth-child(2) .project-meta{color:#6e5960}.project .status{color:#6b2834;border-color:#9b6871;background:rgba(255,247,237,.18);padding:3px 6px}.project:nth-child(2) .status{color:#66313b;border-color:#986f79;background:rgba(255,247,237,.14)}.project .progress-line{height:2px;margin-bottom:7px;background:rgba(58,36,31,.22)}.project .progress-line i{background:#7b2c3b}.project:nth-child(2) .progress-line i{background:#7b3f4a}.project .bar i{background:#7b2c3b}.project:nth-child(2) .bar i{background:#7b3f4a)}.project .status{font-size:8px;letter-spacing:.08em}
+</style>
+
+<style>
+.week-row{gap:12px;align-items:stretch;border:0}.day{aspect-ratio:auto;min-height:168px;border-radius:86px 86px 7px 7px;padding:17px 7px 13px;border:1px solid rgba(211,166,107,.28);background:linear-gradient(180deg,rgba(92,57,53,.56),rgba(17,7,11,.96));box-shadow:inset 0 0 24px rgba(255,229,197,.025),0 10px 20px rgba(0,0,0,.2);position:relative;overflow:hidden}.day::before{content:"";position:absolute;inset:6px 6px 0;border:1px solid rgba(255,231,206,.07);border-radius:80px 80px 3px 3px;pointer-events:none}.day::after{display:block;content:"";position:absolute;left:50%;bottom:0;width:1px;height:14px;background:rgba(211,166,107,.48);transform:translateX(-50%)}.day:nth-child(1){background:linear-gradient(180deg,rgba(124,94,78,.62),rgba(17,7,11,.96));border-color:rgba(180,132,105,.4)}.day:nth-child(2){background:linear-gradient(180deg,rgba(129,107,77,.62),rgba(17,7,11,.96));border-color:rgba(184,155,105,.4)}.day:nth-child(3){background:linear-gradient(180deg,rgba(74,94,91,.62),rgba(17,7,11,.96));border-color:rgba(118,151,147,.36)}.day:nth-child(4){background:linear-gradient(180deg,rgba(111,57,75,.72),rgba(17,7,11,.96));border-color:rgba(172,93,119,.44)}.day:nth-child(5){background:linear-gradient(180deg,rgba(111,63,53,.68),rgba(17,7,11,.96));border-color:rgba(173,101,83,.4)}.day:nth-child(6){background:linear-gradient(180deg,rgba(120,81,58,.68),rgba(17,7,11,.96));border-color:rgba(184,129,91,.4)}.day:nth-child(7){background:linear-gradient(180deg,rgba(131,49,69,.8),rgba(17,7,11,.97));border-color:rgba(211,166,107,.55);box-shadow:0 0 26px rgba(181,45,76,.18),inset 0 0 24px rgba(255,229,197,.035)}.day:hover{border-color:#d3a66b;background:linear-gradient(180deg,rgba(145,89,78,.75),rgba(17,7,11,.97))}.day.today{border-color:#d3a66b}.day .weekday{color:#d3a66b;font-size:9px;letter-spacing:.18em}.mood-name{color:#f4e7d5;font:14px Georgia,"Songti SC",serif}.day .date{color:#bba1a2;font-size:9px}.cat{font-size:36px;filter:drop-shadow(0 0 8px rgba(211,166,107,.18))}
+</style>
+
+<style>
+.projects{gap:16px}.projects .project.tone-copper{background:linear-gradient(135deg,#b58a68 0%,#a57555 52%,#916247 100%);border-color:#d0b095;box-shadow:0 8px 18px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,240,220,.28)}.projects .project.tone-taupe{background:linear-gradient(135deg,#b3a095 0%,#9f8b80 52%,#8b776d 100%);border-color:#cdbbb0;box-shadow:0 8px 18px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,245,237,.26)}.projects .project.tone-copper h3,.projects .project.tone-taupe h3{color:#2d2221}.projects .project.tone-copper p,.projects .project.tone-taupe p{color:#5a4841}.projects .project.tone-copper .project-meta,.projects .project.tone-taupe .project-meta{color:#6a554c}.projects .project.tone-copper .status,.projects .project.tone-taupe .status{color:#682b35;border-color:#9d6d74;background:rgba(255,247,237,.18)}.projects .project.tone-copper .progress-line i,.projects .project.tone-taupe .progress-line i{background:#7b3545}.projects .project.tone-copper::before,.projects .project.tone-taupe::before{border-color:rgba(65,44,38,.2)}
+</style>
+<script>const extraProjects = `<article class="project tone-copper"><div class="project-top"><h3>比赛</h3><span class="status">计划中</span></div><p>确认报名、材料和比赛当天清单，把能提前完成的事先收掉。</p><div class="progress-line"><i style="width:42%"></i></div><div class="project-meta"><span>最近更新 · 今天</span><span>截止 11.25</span></div></article><article class="project tone-taupe"><div class="project-top"><h3>雅思</h3><span class="status">进行中</span></div><p>保持听力和口语手感，整理素材；不设每天必须完成的硬任务。</p><div class="progress-line"><i style="width:58%"></i></div><div class="project-meta"><span>最近更新 · 昨天</span><span>长期</span></div></article>`; document.querySelector('.projects').insertAdjacentHTML('beforeend', extraProjects);</script><script src="data-utils.js"></script><script src="app.js"></script></body>
+</html>
