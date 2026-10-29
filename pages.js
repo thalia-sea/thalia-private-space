@@ -201,7 +201,7 @@
       root.innerHTML = `<section class="project-hero"><p class="eyebrow">02 / PROJECT THREAD</p><h1>${esc(project.name)}</h1><div class="project-sub"><span class="status">${esc(project.status || '进行中')}</span><span>${project.deadline ? '截止 ' + dateLabel(project.deadline) : '长期项目'}</span><a href="notes.html">查看全部手记 ↗</a><a href="projects.html">全部项目 ↗</a><button class="project-status-toggle ${project.status === '已完成' ? 'is-complete' : ''}" id="toggleProjectStatus" type="button">${project.status === '已完成' ? '恢复进行中' : '标记完成'}</button></div><p>${esc(project.description || '还没有项目简介。')}</p><div class="project-bar"><i style="width:${Math.max(0, Math.min(100, Number(project.progress || 0)))}%"></i></div></section><div class="project-toolbar"><h2>全部进展</h2><button id="addProgress" type="button">＋ 新增进展</button></div><div class="timeline">${logs.length ? logs.map(item => {
         const note = item.noteId ? thoughts.find(thought => thought.id === item.noteId) : null;
         return `<article class="timeline-item" data-progress-id="${esc(item.id)}"><time>${dateLabel(item.date)}</time><p>${esc(item.text)}</p><div class="timeline-links">${item.link ? `<a href="${esc(item.link)}" target="_blank" rel="noreferrer">打开外部链接 ↗</a>` : ''}${note ? `<a href="notes.html?note=${encodeURIComponent(note.id)}">关联手记：${esc(note.title)} ↗</a>` : ''}</div><div class="timeline-actions"><button type="button" data-edit-progress="${esc(item.id)}">编辑</button><button type="button" data-delete-progress="${esc(item.id)}">删除</button></div></article>`;
-      }).join('') : '<div class="project-empty">还没有进展。没有进展也可以，日子不是任务清单。</div>'}</div>`;
+      }).join('') : '<div class="project-empty">还没有进展。没有进展也可以，日子不是任务清单。</div>'}</div><div class="project-danger-zone"><div><strong>删除这个项目</strong><span>项目及其全部进展会永久删除，关联手记会保留。</span></div><button id="deleteProject" type="button">删除项目</button></div>`;
 
       $('#addProgress').addEventListener('click', () => openProgressModal(project, null, render));
       $('#toggleProjectStatus').addEventListener('click', () => {
@@ -211,6 +211,14 @@
         if (!completed) project.progress = 100;
         write(STORE.projects, projects);
         render();
+      });
+      $('#deleteProject').addEventListener('click', () => {
+        if (!confirm(`删除「${project.name}」？项目的全部进展也会删除，关联手记会保留。此操作不能恢复。`)) return;
+        projects = projects.filter(item => item.id !== project.id);
+        progress = progress.filter(item => item.projectId !== project.id);
+        write(STORE.projects, projects);
+        write(STORE.progress, progress);
+        window.location.href = 'projects.html';
       });
       $$('[data-edit-progress]', root).forEach(button => button.addEventListener('click', () => {
         const item = progress.find(entry => entry.id === button.dataset.editProgress);
