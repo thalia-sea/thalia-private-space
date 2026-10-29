@@ -120,3 +120,12 @@
 .note-actions button[data-delete-thought],.timeline-actions button[data-delete-progress]{color:#c77a88;border-color:rgba(181,45,76,.28)}
 .note-actions button[data-delete-thought]:hover,.timeline-actions button[data-delete-progress]:hover{background:#7d2438;color:#f4e7d5}
 @media(max-width:700px){.footer-export{font-size:9px}.note-actions{margin-left:67px}}
+/* Project archive entry */
+.section-actions{display:flex;align-items:flex-end;gap:15px}
+.section-actions .tiny-note{padding-bottom:3px}
+.all-projects-link{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(211,166,107,.34);background:rgba(29,10,16,.58);color:#d3a66b;text-decoration:none;padding:7px 10px;font-size:9px;letter-spacing:.12em;white-space:nowrap;transition:background .18s ease,border-color .18s ease,color .18s ease,transform .18s ease}
+.all-projects-link span{color:#f4e7d5;font:12px Georgia,serif;letter-spacing:0}
+.all-projects-link b{font-weight:400}
+.all-projects-link:hover{background:#8e2640;border-color:#d3a66b;color:#f4e7d5;transform:translateY(-1px)}
+.all-projects-link:focus-visible{outline:2px solid #d3a66b;outline-offset:3px}
+@media(max-width:680px){.section-actions{align-items:flex-start;flex-direction:column;gap:8px}.section-actions .tiny-note{padding-bottom:0}}
