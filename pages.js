@@ -17,7 +17,7 @@
   let progress = read(STORE.progress, []);
   let notes = read(STORE.notes, []);
   const seed = () => {
-    if (!thoughts.length) {
+    if (localStorage.getItem(STORE.thoughts) === null) {
       thoughts = [
         { id:'t1', date:todayKey, title:'关于“把生活整理成自己的房间”', body:'也许我想要的不是一个更漂亮的日记本，而是一个能回头看的地方。' },
         { id:'t2', date:iso(addDays(today,-2)), title:'今天不想做正确的人', body:'只想先把那口气留在纸上，不急着变成一个情绪稳定的大人。' },
@@ -25,7 +25,7 @@
       ];
       write(STORE.thoughts, thoughts);
     }
-    if (!projects.length) {
+    if (localStorage.getItem(STORE.projects) === null) {
       projects = [
         {id:'p-vision',name:'智能车视觉',status:'进行中',deadline:'2026-11-25',description:'完成反光保护回归测试。明天把近处 error 和 valid 再对齐一次。',tone:'gold',progress:68},
         {id:'p-project',name:'大创立项',status:'进行中',deadline:'2026-12-18',description:'整理立项书框架，把等离子体表面改性拆成三个可验证的问题。',tone:'rose',progress:36},
@@ -34,7 +34,7 @@
       ];
       write(STORE.projects, projects);
     }
-    if (!progress.length) {
+    if (localStorage.getItem(STORE.progress) === null) {
       progress = [
         {id:'g1',projectId:'p-vision',date:todayKey,text:'完成反光保护回归测试。明天把近处 error 和 valid 再对齐一次。',link:'',progress:68,noteId:'t1'},
         {id:'g2',projectId:'p-project',date:iso(addDays(today,-1)),text:'整理立项书框架，把等离子体表面改性拆成三个可验证的问题。',link:'',progress:36,noteId:''},
@@ -43,7 +43,7 @@
       ];
       write(STORE.progress, progress);
     }
-    if (!notes.length) {
+    if (localStorage.getItem(STORE.notes) === null) {
       notes = [
         {id:'n1',title:'大物期中考试',body:'',date:iso(addDays(today,14))},
         {id:'n2',title:'等离子体大赛',body:'',date:'2027-03-15'},
@@ -54,6 +54,18 @@
     }
   };
   seed();
+
+  const saveAll = () => {
+    write(STORE.thoughts, thoughts);
+    write(STORE.projects, projects);
+    write(STORE.progress, progress);
+    write(STORE.notes, notes);
+  };
+
+  window.addEventListener('pagehide', saveAll);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') saveAll();
+  });
   const ensureModal = () => {
     let modal = $('#appModal');
     if (!modal) {
