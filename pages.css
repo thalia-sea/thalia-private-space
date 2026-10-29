@@ -51,4 +51,11 @@
   .subpage-footer{display:grid;grid-template-columns:1fr auto;align-items:center;gap:8px 12px}
   .subpage-footer .footer-export{justify-self:end;white-space:nowrap}
   .subpage-footer span:last-child{grid-column:1/-1;text-align:right}
-}
+}.project-danger-zone{display:flex;justify-content:space-between;align-items:center;gap:24px;margin-top:34px;padding:18px 20px;border:1px solid rgba(181,45,76,.24);background:rgba(70,17,29,.16)}
+.project-danger-zone div{display:grid;gap:5px}
+.project-danger-zone strong{color:#c9b8b2;font:400 17px Georgia,"Songti SC",serif}
+.project-danger-zone span{color:#8f7e7d;font-size:10px;line-height:1.6}
+.project-danger-zone button{border:1px solid rgba(181,45,76,.42);background:transparent;color:#c77a88;padding:8px 12px;font-size:10px;letter-spacing:.08em;cursor:pointer}
+.project-danger-zone button:hover{background:#7d2438;border-color:#b52d4c;color:#f4e7d5}
+.project-danger-zone button:focus-visible{outline:2px solid #d3a66b;outline-offset:3px}
+@media(max-width:700px){.project-danger-zone{align-items:flex-start;flex-direction:column;gap:14px}.project-danger-zone button{width:100%}}
