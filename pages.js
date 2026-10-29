@@ -198,12 +198,20 @@
     }
     const render = () => {
       const logs = progress.filter(item => item.projectId === project.id).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-      root.innerHTML = `<section class="project-hero"><p class="eyebrow">02 / PROJECT THREAD</p><h1>${esc(project.name)}</h1><div class="project-sub"><span class="status">${esc(project.status || '进行中')}</span><span>${project.deadline ? '截止 ' + dateLabel(project.deadline) : '长期项目'}</span><a href="notes.html">查看全部手记 ↗</a></div><p>${esc(project.description || '还没有项目简介。')}</p><div class="project-bar"><i style="width:${Math.max(0, Math.min(100, Number(project.progress || 0)))}%"></i></div></section><div class="project-toolbar"><h2>全部进展</h2><button id="addProgress" type="button">＋ 新增进展</button></div><div class="timeline">${logs.length ? logs.map(item => {
+      root.innerHTML = `<section class="project-hero"><p class="eyebrow">02 / PROJECT THREAD</p><h1>${esc(project.name)}</h1><div class="project-sub"><span class="status">${esc(project.status || '进行中')}</span><span>${project.deadline ? '截止 ' + dateLabel(project.deadline) : '长期项目'}</span><a href="notes.html">查看全部手记 ↗</a><a href="projects.html">全部项目 ↗</a><button class="project-status-toggle ${project.status === '已完成' ? 'is-complete' : ''}" id="toggleProjectStatus" type="button">${project.status === '已完成' ? '恢复进行中' : '标记完成'}</button></div><p>${esc(project.description || '还没有项目简介。')}</p><div class="project-bar"><i style="width:${Math.max(0, Math.min(100, Number(project.progress || 0)))}%"></i></div></section><div class="project-toolbar"><h2>全部进展</h2><button id="addProgress" type="button">＋ 新增进展</button></div><div class="timeline">${logs.length ? logs.map(item => {
         const note = item.noteId ? thoughts.find(thought => thought.id === item.noteId) : null;
         return `<article class="timeline-item" data-progress-id="${esc(item.id)}"><time>${dateLabel(item.date)}</time><p>${esc(item.text)}</p><div class="timeline-links">${item.link ? `<a href="${esc(item.link)}" target="_blank" rel="noreferrer">打开外部链接 ↗</a>` : ''}${note ? `<a href="notes.html?note=${encodeURIComponent(note.id)}">关联手记：${esc(note.title)} ↗</a>` : ''}</div><div class="timeline-actions"><button type="button" data-edit-progress="${esc(item.id)}">编辑</button><button type="button" data-delete-progress="${esc(item.id)}">删除</button></div></article>`;
       }).join('') : '<div class="project-empty">还没有进展。没有进展也可以，日子不是任务清单。</div>'}</div>`;
 
       $('#addProgress').addEventListener('click', () => openProgressModal(project, null, render));
+      $('#toggleProjectStatus').addEventListener('click', () => {
+        const completed = project.status === '已完成';
+        project.status = completed ? '进行中' : '已完成';
+        project.completedAt = completed ? '' : todayKey;
+        if (!completed) project.progress = 100;
+        write(STORE.projects, projects);
+        render();
+      });
       $$('[data-edit-progress]', root).forEach(button => button.addEventListener('click', () => {
         const item = progress.find(entry => entry.id === button.dataset.editProgress);
         if (item) openProgressModal(project, item, render);
@@ -222,6 +230,37 @@
     render();
   };
 
+  const openProjectsPage = () => {
+    const root = $('#projectsArchive');
+    if (!root) return;
+    const completed = [...projects]
+      .filter(project => project.status === '已完成')
+      .sort((a, b) => (b.completedAt || b.deadline || '').localeCompare(a.completedAt || a.deadline || ''));
+    const active = projects.filter(project => project.status !== '已完成');
+    const latestFor = project => progress
+      .filter(item => item.projectId === project.id)
+      .sort((a, b) => (b.date || '').localeCompare(a.date || ''))[0];
+
+    const card = (project, archived = false) => {
+      const latest = latestFor(project);
+      return `<article class="archive-project ${archived ? 'is-archived' : `tone-${esc(project.tone || 'gold')}`}" data-project-id="${esc(project.id)}">
+        <div class="archive-project-top"><span>${archived ? 'ARCHIVED' : esc(project.status || '进行中')}</span><time>${archived ? '完成于 ' + dateLabel(project.completedAt || project.deadline) : project.deadline ? '截止 ' + dateLabel(project.deadline) : '长期'}</time></div>
+        <h3>${esc(project.name)}</h3>
+        <p>${esc(latest?.text || project.description || '还没有项目简介。')}</p>
+        <div class="archive-project-foot"><span>${project.progress || 0}%</span><span>${latest ? '最近更新 ' + dateLabel(latest.date) : '暂无进展'}</span><b>打开档案 ↗</b></div>
+      </article>`;
+    };
+
+    root.innerHTML = `<section class="archive-hero"><div><h1>全部项目</h1><p>正在发生的继续往前，已经完成的留在这里。它们都算数。</p></div><div class="archive-count"><strong>${projects.length}</strong><span>PROJECTS KEPT</span></div></section>
+      <section class="archive-section"><div class="archive-heading"><h2>已完成</h2><span>${completed.length ? completed.length + ' 项封存' : 'ARCHIVE EMPTY'}</span></div><div class="archive-grid">${completed.length ? completed.map(project => card(project, true)).join('') : '<div class="archive-empty">还没有完成的项目。等在项目详情里点“标记完成”，它会出现在这里。</div>'}</div></section>
+      <section class="archive-section"><div class="archive-heading"><h2>进行中与计划中</h2><span>${active.length} 项</span></div><div class="archive-grid">${active.length ? active.map(project => card(project)).join('') : '<div class="archive-empty">目前没有进行中的项目。</div>'}</div></section>`;
+
+    $$('.archive-project', root).forEach(item => item.addEventListener('click', () => {
+      window.location.href = 'project.html?id=' + encodeURIComponent(item.dataset.projectId);
+    }));
+  };
+
   if (document.body.querySelector('#notesList')) openNotesPage();
   if (document.body.querySelector('#projectPage')) openProjectPage();
+  if (document.body.querySelector('#projectsArchive')) openProjectsPage();
 })();
