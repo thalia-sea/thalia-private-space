@@ -417,7 +417,7 @@ html{background:#0b0809}body{background:radial-gradient(circle at 78% 28%,rgba(2
               <p class="eyebrow">In motion</p>
               <h2>正在发生</h2>
             </div>
-            <span class="tiny-note">没有进展也可以，日子不是任务清单</span>
+            <div class="section-actions"><span class="tiny-note">没有进展也可以，日子不是任务清单</span><a class="all-projects-link" id="allProjectsLink" href="projects.html">全部项目 <span id="allProjectsCount">0</span> <b>↗</b></a></div>
           </div>
           <div class="projects">
             <article class="project">
@@ -536,5 +536,5 @@ body{background:radial-gradient(ellipse at 58% 0%,rgba(158,26,48,.36),transparen
 <style>
 .projects{gap:16px}.projects .project.tone-copper{background:linear-gradient(135deg,#b58a68 0%,#a57555 52%,#916247 100%);border-color:#d0b095;box-shadow:0 8px 18px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,240,220,.28)}.projects .project.tone-taupe{background:linear-gradient(135deg,#b3a095 0%,#9f8b80 52%,#8b776d 100%);border-color:#cdbbb0;box-shadow:0 8px 18px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,245,237,.26)}.projects .project.tone-copper h3,.projects .project.tone-taupe h3{color:#2d2221}.projects .project.tone-copper p,.projects .project.tone-taupe p{color:#5a4841}.projects .project.tone-copper .project-meta,.projects .project.tone-taupe .project-meta{color:#6a554c}.projects .project.tone-copper .status,.projects .project.tone-taupe .status{color:#682b35;border-color:#9d6d74;background:rgba(255,247,237,.18)}.projects .project.tone-copper .progress-line i,.projects .project.tone-taupe .progress-line i{background:#7b3545}.projects .project.tone-copper::before,.projects .project.tone-taupe::before{border-color:rgba(65,44,38,.2)}
 </style>
-<script>const extraProjects = `<article class="project tone-copper"><div class="project-top"><h3>比赛</h3><span class="status">计划中</span></div><p>确认报名、材料和比赛当天清单，把能提前完成的事先收掉。</p><div class="progress-line"><i style="width:42%"></i></div><div class="project-meta"><span>最近更新 · 今天</span><span>截止 11.25</span></div></article><article class="project tone-taupe"><div class="project-top"><h3>雅思</h3><span class="status">进行中</span></div><p>保持听力和口语手感，整理素材；不设每天必须完成的硬任务。</p><div class="progress-line"><i style="width:58%"></i></div><div class="project-meta"><span>最近更新 · 昨天</span><span>长期</span></div></article>`; document.querySelector('.projects').insertAdjacentHTML('beforeend', extraProjects);</script><script src="data-utils.js"></script><script src="app.js"></script></body>
+<script src="data-utils.js"></script><script src="app.js"></script></body>
 </html>
