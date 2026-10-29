@@ -137,11 +137,16 @@
   const renderProjects = () => {
     const wrap = $('.projects');
     if (!wrap) return;
-    if (!state.projects.length) {
-      wrap.innerHTML = '<div class="projects-empty">还没有项目。点右上角加号，新建一个。</div>';
+    const activeProjects = state.projects.filter(project => project.status !== '已完成');
+    const allCount = $('#allProjectsCount');
+    if (allCount) allCount.textContent = String(state.projects.length);
+    if (!activeProjects.length) {
+      wrap.innerHTML = state.projects.length
+        ? '<div class="projects-empty">目前没有进行中的项目。<a class="view-all" href="projects.html">去全部项目看看 ↗</a></div>'
+        : '<div class="projects-empty">还没有项目。点右上角“＋ 记录”，新建一个。</div>';
       return;
     }
-    wrap.innerHTML = state.projects.map(project => {
+    wrap.innerHTML = activeProjects.map(project => {
       const logs = state.progress.filter(p => p.projectId === project.id).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
       const latest = logs[0];
       return `<article class="project tone-${escapeHtml(project.tone || 'gold')}" data-project-id="${escapeHtml(project.id)}">
@@ -298,7 +303,8 @@
           state.thoughts.push({ id: uid(), date: todayKey, title: data.title.trim(), body: data.body.trim() });
         } else if (mode === 'project') {
           const tone = TONES[state.projects.length % TONES.length];
-          state.projects.push({ id: uid(), name: data.name.trim(), deadline: data.deadline || '', status: data.status || '进行中', description: (data.description || '').trim(), tone, progress: 0 });
+          const status = data.status || '进行中';
+          state.projects.push({ id: uid(), name: data.name.trim(), deadline: data.deadline || '', status, completedAt: status === '已完成' ? todayKey : '', description: (data.description || '').trim(), tone, progress: status === '已完成' ? 100 : 0 });
         } else if (mode === 'progress') {
           const progressValue = Number(data.progress);
           state.progress.push({ id: uid(), projectId: data.projectId, date: todayKey, text: data.text.trim(), link: (data.link || '').trim(), progress: Number.isFinite(progressValue) ? progressValue : 0 });
