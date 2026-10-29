@@ -58,4 +58,5 @@
 .project-danger-zone button{border:1px solid rgba(181,45,76,.42);background:transparent;color:#c77a88;padding:8px 12px;font-size:10px;letter-spacing:.08em;cursor:pointer}
 .project-danger-zone button:hover{background:#7d2438;border-color:#b52d4c;color:#f4e7d5}
 .project-danger-zone button:focus-visible{outline:2px solid #d3a66b;outline-offset:3px}
-@media(max-width:700px){.project-danger-zone{align-items:flex-start;flex-direction:column;gap:14px}.project-danger-zone button{width:100%}}
+@media(max-width:700px){.project-danger-zone{align-items:flex-start;flex-direction:column;gap:14px}.project-danger-zone button{width:100%}}.subpage-footer .footer-data-actions{justify-content:flex-end}
+@media(max-width:700px){.subpage-footer .footer-data-actions{justify-self:end;flex-wrap:nowrap;gap:10px}}
